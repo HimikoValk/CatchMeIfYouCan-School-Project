@@ -32,8 +32,6 @@ class Player():
     rotation = 0
     rot_speed = 30
 
-
-
     def __init__(self, desired_scale_x, desired_scale_y, Width, Height):
         self.scale.x = desired_scale_x
         self.scale.y = desired_scale_y
@@ -78,7 +76,7 @@ class Player():
 
         self.player_sprite.rect.topleft = self.position.x, self.position.y
 
-    def draw(self, screen, colliders):
+    def draw(self, screen):
         img_copy = pygame.transform.scale(self.player_sprite.image, (int(self.scalar), int(self.scalar)))
         img_copy = pygame.transform.rotate(img_copy, self.rotation)
         screen.blit(img_copy, (self.position.x - int(img_copy.get_width() / 2), self.position.y - int(img_copy.get_height() / 2)))

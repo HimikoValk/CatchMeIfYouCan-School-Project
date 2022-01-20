@@ -6,12 +6,13 @@ from pygame.constants import K_a
 from pygame.constants import K_s
 from pygame.constants import K_d
 from DataBank import FireBaseDataBank
+from Enemy import EntityEnemy
 from Player import Player
 
 WIDTH, HEIGHT = 800, 800
 #0 = Menu, 1 = game, 2 =  Quit
 game_state = 0
-start_wave = 1
+wave = 1
 score = 0
 
 entites_alive = []
@@ -72,7 +73,8 @@ class Game():
         clock = pygame.time.Clock()
         keys = [False, False, False, False]
         player = Player(80, 80, WIDTH, HEIGHT)
-        collideres = []
+        enemy = EntityEnemy(80, 80, WIDTH, HEIGHT)
+        
 
         while(game_state == 1): 
             screen.fill(WHITE)
@@ -81,8 +83,10 @@ class Game():
                     game_state = 2
                 print(event)
                 self.handle_inputs(keys, event)
-            player.move(keys, 1)
-            player.draw(screen, collideres)
+            enemy.move(True, 1)
+            #player.move(keys, 1)
+            #player.draw(screen)
+            enemy.draw(screen)
             Main.update_score(screen, font)
             
             pygame.display.update()
