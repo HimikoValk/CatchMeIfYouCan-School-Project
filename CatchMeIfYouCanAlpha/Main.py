@@ -81,11 +81,11 @@ class Game():
             for event in pygame.event.get(): 
                 if(event.type == pygame.QUIT): 
                     game_state = 2
-                print(event)
+                #print(event)
                 self.handle_inputs(keys, event)
             enemy.move(True, 1)
-            #player.move(keys, 1)
-            #player.draw(screen)
+            player.move(keys, 1)
+            player.draw(screen)
             enemy.draw(screen)
             Main.update_score(screen, font)
             

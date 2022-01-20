@@ -1,4 +1,3 @@
-import Main
 from Player import Player
 
 class Spwaner(): 
