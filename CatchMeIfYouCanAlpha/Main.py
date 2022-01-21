@@ -83,7 +83,7 @@ class Game():
                     game_state = 2
                 #print(event)
                 self.handle_inputs(keys, event)
-            enemy.move(True, 1)
+            enemy.move(False, 1)
             player.move(keys, 1)
             player.draw(screen)
             enemy.draw(screen)

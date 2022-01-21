@@ -1,3 +1,4 @@
+from threading import Thread
 import pygame
 from random import seed 
 from random import randint
@@ -41,13 +42,14 @@ class EntityEnemy():
         self.scalar = self.scale.x
 
     def move(self,attack_player, dt): 
-        if(attack_player == True): 
+        if(attack_player == False): 
             value = randint(0, 3)
-            self.handel_move_way(value, dt)        
+            self.handel_move_way(0, dt)        
 
 
     def handel_move_way(self, index, dt): 
         self.move_way[index]
+        
         if(self.move_way[0]):
             self.position.y -= 0.01 * dt * self.speed
             self.rotation += 0.01 * dt * self.rot_speed
@@ -73,12 +75,9 @@ class EntityEnemy():
         else: 
             spawner_calcs += 1
             spawnerCalc_value = int(Spwaner.spawn_rate_cal())
-            print(spawnerCalc_value)
-            for i in range(0,spawnerCalc_value): 
-                        self.position.x  += 0.01
-                        img_copy = pygame.transform.scale(self.enemy_sprite.image, (int(self.scalar), int(self.scalar)))
-                        img_copy = pygame.transform.rotate(img_copy, self.rotaion)
-                        screen.blit(img_copy, (self.position.x - int(img_copy.get_width() / 2), self.position.y - int(img_copy.get_height() / 2)))
+            img_copy = pygame.transform.scale(self.enemy_sprite.image, (int(self.scalar), int(self.scalar)))
+            img_copy = pygame.transform.rotate(img_copy, self.rotaion)
+            screen.blit(img_copy, (self.position.x - int(img_copy.get_width() / 2), self.position.y - int(img_copy.get_height() / 2)))
 
 
     
