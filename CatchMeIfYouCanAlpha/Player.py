@@ -21,6 +21,7 @@ class Player():
     #Transform
     position = pygame.Vector2()
     scale = pygame.Vector2()
+    rotated = 0
 
     #Physics
     velocity_y = 0
@@ -55,10 +56,7 @@ class Player():
 
         if(keys[0]):
             self.position.y -= 0.01 * dt * self.speed
-            if(self.rotation != 0):
-                self.rotation += 0.01 * dt * self.rot_speed
-            else:
-                self.rotation = 0
+            self.rotation += 0.01 * dt * self.rot_speed
         if(keys[1]):
             self.position.x -= 0.01 * dt * self.speed
             self.rotation += 0.01 * dt * self.rot_speed
