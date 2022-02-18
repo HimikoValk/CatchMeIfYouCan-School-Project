@@ -4,20 +4,9 @@ class SList():
     scorelist = []
 
     def __init__(self):
-        self.scorelist
         
-    scorelist.append({
-        "User": 
-        {
-            "username" : "",
-            "score" : ""
-        }
-    })
-    
-    print(scorelist[0])
+        for username in self.dataBank.useres_ref():
+            self.scorelist.append(self.dataBank.get_ref(username)) 
 
-    def sort_score_list(self): 
-        
-        for user in self.dataBank.useres_ref(): 
-            return None
+
 

@@ -4,30 +4,27 @@ from firebase_admin import db
 
 class FireBaseDataBank(): 
 
-    cred_obj = firebase_admin.credentials.Certificate('Data/firebaseKey.json')
+    cred_obj = firebase_admin.credentials.Certificate('Data/key.json')
     
     def establish(self):
         
          firebase_admin.initialize_app(self.cred_obj,{
              
-             'databaseURL': 'https://catchmeifyoucan-highscoredata-default-rtdb.europe-west1.firebasedatabase.app/'
+             'databaseURL': 'https://catchmeifyoucan-fe0ff-default-rtdb.europe-west1.firebasedatabase.app/'
 
              })
             
     
-    def create_user(self, username="", password="",score=0): 
-        ref = db.reference('/')
+    def create_user(self, username, password,score): 
+        ref = db.reference('Useres')
         ref.set({
-            'Useres': 
-                {
                     username : {
                         'name' : username, 
                         'password' : password,
                         'score' : score
                     }
-                }
         })
-        print("Successfully Createt User!")
+        return True
     
     def update_user_score(self,username="",score=0): 
         ref = db.reference('Useres')
@@ -37,8 +34,13 @@ class FireBaseDataBank():
         })
 
     def get_ref(self, username): 
-        ref = db.reference(f'Useres/{username}')
-        return ref
+        ref = db.reference('Useres')
+        emp_ref = ref.child(username)
+        return emp_ref
+
+    def get_score(self, username): 
+        child = self.get_ref(username)
+        return child.child("score").get()
     
     def useres_ref(self): 
         return db.collections.Collection('Useres')

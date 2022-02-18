@@ -44,7 +44,7 @@ class EntityEnemy():
     def move(self,attack_player, dt): 
         if(attack_player == False): 
             value = randint(0, 3)
-            self.handel_move_way(0, dt)        
+            self.handel_move_way(value, dt)        
 
 
     def handel_move_way(self, index, dt): 
