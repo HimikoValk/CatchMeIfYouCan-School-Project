@@ -1,21 +1,25 @@
+from cgitb import text
+from random import randrange
 import time
 from typing import final
 from threading import Thread
 import pygame
+import subprocess
 from pygame.constants import K_w
 from pygame.constants import K_a
 from pygame.constants import K_s
 from pygame.constants import K_d
+from BackGround import BackGround
 from Button import Button
 from DataBank import FireBaseDataBank
 from Enemy import EntityEnemy
 from InputBox import InputBox
+from Items import ItemList
 from Player import Player
 
 WIDTH, HEIGHT = 800, 800
 username = ""
-#0 = Menu, 1 = RegisterMenu, 2 = game, 3 =  Quit
-game_state = 0
+game_state = 0 #0 = Menu, 1 = RegisterMenu, 2 = game menu ,3 = game, 4 =  Quit, 5 = ScoreList
 wave = 1
 score = 0
 
@@ -39,6 +43,8 @@ class Main():
     def login_menu(screen, font):
         global username 
         global game_state
+
+        openOnce = False
 
         COLOR = (217, 165, 76)
         Login_FONT = pygame.font.Font("Data/Fonts/Inter.ttf", 32)
@@ -70,8 +76,9 @@ class Main():
             screen.blit(font.render(Check_text, True, Check_Color), (WIDTH / 2 - len(Check_text) - 100 , 300))
 
             for event in pygame.event.get():  
+                
                 if(event.type == pygame.QUIT): 
-                    game_state = 3 
+                    game_state = 4 
                      
                 for box in input_boxes: 
                     box.handel_event(event)
@@ -80,8 +87,9 @@ class Main():
                     button.handel_event(event)
                     
                     if(buttons[1].active):
-                        game_state = 1
-                    
+                        if(openOnce == False): 
+                            subprocess.Popen('Data/exe/GameRegister.exe')
+                            openOnce = True
                     elif(buttons[0].active): 
                         if(FireBaseDataBank().check_user_input_data(username_input_box.get_text(), password_input_box.get_text()) == True): 
                             username = username_input_box.get_text()
@@ -99,9 +107,10 @@ class Main():
             for box in input_boxes: 
                 box.update()
                 box.draw(screen)
+
             
             pygame.display.update()
-
+    '''
     def register_menu(screen, font): 
         global game_state
 
@@ -128,7 +137,7 @@ class Main():
 
             for event in pygame.event.get(): 
                 if(event.type == pygame.QUIT): 
-                    game_state = 3
+                    game_state = 4
 
                 for button in buttons: 
                     button.handel_event(event)
@@ -150,60 +159,105 @@ class Main():
                 box.draw(screen) 
 
             pygame.display.update()
-
-
-             
+''' 
+         
 class Game(): 
-
-    player = Player(80, 80, WIDTH, HEIGHT)
-
+    
+    player = None
+    
     def update_score(self): 
         global score
         #pygame.time.delay(1000)
         score += 1
 
+    def game_menu(self, screen, font): 
+        openOnce = False
+        global game_state
+        global username
+        global score
+
+        start_game_button = Button(100, HEIGHT/2, 140, 32, (255,255,255), font, text="Start")
+        scoreboard_button = Button(240, HEIGHT/2, 140, 32, (255,255,255), font, text="Score List")
+        buttonList = [start_game_button, scoreboard_button]
+        COLOR = (217, 165, 76)
+        while game_state == 2:
+            screen.fill(COLOR)
+            
+            for event in pygame.event.get():             
+                if(event.type == pygame.QUIT): 
+                    game_state = 4
+
+                for button in buttonList: 
+                    button.handel_event(event)
+
+                    if(buttonList[0].active):   
+                        game_state = 3
+                    elif(buttonList[1].active): 
+                        if(openOnce == False): 
+                            subprocess.Popen("Data/exe/ScoreList.exe")
+                            openOnce = True
+
+            
+            for button in buttonList: 
+                button.draw(screen)
+            
+            pygame.display.update()
+    
+                
+
     def run_game(self, screen, font):
         global game_state
         global username
         global score
-       
+
         color = (0, 0, 0)
         text = "Score:"
         clock = pygame.time.Clock()
         keys = [False, False, False, False]
         self.player = Player(80, 80, WIDTH, HEIGHT)
-        enemy = EntityEnemy(80, 80, WIDTH, HEIGHT)        
+        enemy = EntityEnemy(80, 80, WIDTH, HEIGHT)
+        items = ItemList()
+        background = BackGround(80, 80, randrange(HEIGHT - 100), randrange(WIDTH - 100))
+
         highscore = 0
         
         #Fixed Program Crash in register menu
-        if(game_state == 2):
+        if(game_state == 3):
             highscore = FireBaseDataBank().get_score(username)
+            self.player.hearts = 3
 
-        while(game_state == 2): 
+        while(game_state == 3 and self.player.hearts > 0): 
             
             #print(FireBaseDataBank().get_score(username))
-            screen.fill((255, 255, 255))
             if(score > highscore): 
                 color = (50, 168, 82)
                 text = "New HighScore! Score:" 
                 highscore = score
-
+            background.drawBackGround(screen)
             screen.blit(font.render(text + str(score), True , color), (WIDTH / 2  - 100 , 0))
             screen.blit(font.render("HighScore:" + str(highscore), True , (0, 0, 0)), (0, 0))
+            screen.blit(font.render("Speed:" + str(self.player.speed), True, (0,0,0)), (600, 0))
             for event in pygame.event.get(): 
                 if(event.type == pygame.QUIT): 
                     FireBaseDataBank().update_user_score(username=username, score=score)
-                    game_state = 3
+                    pygame.quit()
                 self.player.handle_inputs(keys, event)
             self.player.move(keys, 0.5)
             self.player.draw(screen)
-            enemy.move(False, 0.45)
+            background.drawTree(screen, 2, player=self.player)
+            background.draw_rect(screen) 
+            items.drawItems(screen)
+            items.handel_event(self.player)
+            enemy.move(True, 0.25, player=self.player)
             enemy.draw(screen)
+            enemy.draw_rect(screen)
+            #print("X:"+ str(self.player.position.x) +" Y:" +str(self.player.position.y))
             self.update_score()
             #Main.update_score(screen, font)
-            
             pygame.display.update()
             clock.tick(144)
+        if(self.player.hearts < 0): 
+            game_state = 2
 
     def __init__(self):
         db = FireBaseDataBank() 
@@ -214,15 +268,16 @@ class Game():
 
         db.establish()
         
-        while game_state != 3: 
+        while game_state != 4: 
             screen = Main.setup_pygame("Catch Me if you can")
             font = pygame.font.Font("Data/Fonts/Inter.ttf", 16)
             self.previous_frame_time = time.time()
             Main.login_menu(screen, font)
-            Main.register_menu(screen, font)
+            #Main.register_menu(screen, font)
+            self.game_menu(screen, font) 
             self.run_game(screen, font)
     
-    def get_player_speed(self): 
+    def get_player(self): 
         return self.player
-            
+    
 game = Game()
