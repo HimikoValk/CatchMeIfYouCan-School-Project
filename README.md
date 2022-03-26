@@ -1,7 +1,7 @@
 # CatchMeIfYouCan-School-Project
 
 #TODO
-*Fixing Wave-System
+*Fixing Wave-System\n
 *Add Timer for Waves
 *Add Wave Counter
 *Add new Designs for Player
