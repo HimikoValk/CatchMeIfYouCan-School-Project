@@ -16,6 +16,8 @@ from Enemy import EntityEnemy
 from InputBox import InputBox
 from Items import ItemList
 from Player import Player
+from Spawner import Spwaner
+from WaveSystem import Wave
 
 WIDTH, HEIGHT = 800, 800
 username = ""
@@ -176,12 +178,17 @@ class Game():
         global username
         global score
 
-        start_game_button = Button(100, HEIGHT/2, 140, 32, (255,255,255), font, text="Start")
-        scoreboard_button = Button(240, HEIGHT/2, 140, 32, (255,255,255), font, text="Score List")
+        title_font = pygame.font.Font("Data/Fonts/Inter.ttf", 32)
+
+        game_text = title_font.render("Menu", True, (255, 255, 255))
+
+        start_game_button = Button(WIDTH/2 - 160, HEIGHT/2, 140, 32, (255,255,255), font, text="Start")
+        scoreboard_button = Button(WIDTH/2, HEIGHT/2, 140, 32, (255,255,255), font, text="Score List")
         buttonList = [start_game_button, scoreboard_button]
         COLOR = (217, 165, 76)
         while game_state == 2:
             screen.fill(COLOR)
+            screen.blit(game_text, (WIDTH / 2 - game_text.get_width() / 2, 0))
             
             for event in pygame.event.get():             
                 if(event.type == pygame.QUIT): 
@@ -214,17 +221,20 @@ class Game():
         text = "Score:"
         clock = pygame.time.Clock()
         keys = [False, False, False, False]
+        spawner = Spwaner()
         self.player = Player(80, 80, WIDTH, HEIGHT)
-        enemy = EntityEnemy(80, 80, WIDTH, HEIGHT)
+        wave = Wave(self.player)
+        enemy = EntityEnemy(80, 80, WIDTH, HEIGHT, randrange(800), randrange(800))
         items = ItemList()
         background = BackGround(80, 80, randrange(HEIGHT - 100), randrange(WIDTH - 100))
-
         highscore = 0
+        attack_player = True
         
         #Fixed Program Crash in register menu
         if(game_state == 3):
             highscore = FireBaseDataBank().get_score(username)
-            self.player.hearts = 3
+            wave.add_enemy()
+            
 
         while(game_state == 3 and self.player.hearts > 0): 
             
@@ -236,28 +246,36 @@ class Game():
             background.drawBackGround(screen)
             screen.blit(font.render(text + str(score), True , color), (WIDTH / 2  - 100 , 0))
             screen.blit(font.render("HighScore:" + str(highscore), True , (0, 0, 0)), (0, 0))
-            screen.blit(font.render("Speed:" + str(self.player.speed), True, (0,0,0)), (600, 0))
+            #screen.blit(font.render("Hearts:" + str(self.player.hearts), True, (0,0,0)), (600, 0))
             for event in pygame.event.get(): 
                 if(event.type == pygame.QUIT): 
-                    FireBaseDataBank().update_user_score(username=username, score=score)
+                    if(score > highscore): 
+                        FireBaseDataBank().update_user_score(username=username, score=score)
                     pygame.quit()
+                if(event.type == pygame.KEYDOWN): 
+                    if(event.key == pygame.K_ESCAPE): 
+                        if(score > highscore): 
+                            FireBaseDataBank().update_user_score(username=username, score=score)
+                        game_state = 2
+                    if(event.key == pygame.K_g):
+                        attack_player = False
                 self.player.handle_inputs(keys, event)
             self.player.move(keys, 0.5)
             self.player.draw(screen)
-            background.drawTree(screen, 2, player=self.player)
-            background.draw_rect(screen) 
+            
+            wave.create_enemies_on_screen(screen,attack_player)
+            background.drawTree(screen, player=self.player, enemy=wave.get_enemies())
+            #background.draw_rect(screen) 
             items.drawItems(screen)
             items.handel_event(self.player)
-            enemy.move(True, 0.25, player=self.player)
-            enemy.draw(screen)
-            enemy.draw_rect(screen)
-            #print("X:"+ str(self.player.position.x) +" Y:" +str(self.player.position.y))
             self.update_score()
-            #Main.update_score(screen, font)
             pygame.display.update()
             clock.tick(144)
-        if(self.player.hearts < 0): 
+        if(self.player.hearts <= 0): 
+            if(score > highscore): 
+                FireBaseDataBank().update_user_score(username=username, score=score)
             game_state = 2
+            score = 0
 
     def __init__(self):
         db = FireBaseDataBank() 

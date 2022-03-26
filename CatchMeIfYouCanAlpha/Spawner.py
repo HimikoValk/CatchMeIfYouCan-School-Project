@@ -1,8 +1,9 @@
 from Player import Player
-
 class Spwaner(): 
 
-    def spawn_rate_cal():  # Cal = Calculation
-        return Player.speed * 1 / 100 + Player.hearts
+    def spawn_rate_cal(wave, player=Player):  # Cal = Calculation
+        cal = player.speed * wave / 100 + player.hearts
+        return cal
+    
 
 

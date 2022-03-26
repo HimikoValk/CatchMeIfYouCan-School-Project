@@ -12,10 +12,12 @@ class ItemList():
         #Saving Items
         self.Items = [chees, heart, snowball]
         #self.Items.append(Chees)
+        #Create Index for a random Item
+        self.value = randrange(len(self.Items))
 
     def drawItems(self, screen): 
-        for item in self.Items: 
-            item.darw_item(screen)
+        for i in range(self.value): 
+            self.Items[i].darw_item(screen)
      
         
     def handel_event(self, player): 
@@ -44,6 +46,8 @@ class Chees(ParentItem):
             if(player.player_sprite.rect.colliderect(self.item_sprite.rect)): 
                 self.onItem = True
                 player.set_speed(player.speed * 1.5)
+                self.item_sprite.image.fill((0,0,0,0))
+                self.item_sprite.remove()
 
 class Heart(ParentItem): 
 
@@ -60,6 +64,8 @@ class Heart(ParentItem):
                     print("Max Hearts!")
                 else: 
                      player.hearts +=1
+                self.item_sprite.image.fill((0,0,0,0))
+                self.item_sprite.remove()
 
 class SnowBall(ParentItem): 
 
@@ -72,3 +78,5 @@ class SnowBall(ParentItem):
         if(self.IsOnItem == False): 
             if(player.player_sprite.rect.colliderect(self.item_sprite.rect)):
                 self.IsOnItem = True
+                self.item_sprite.image.fill((0,0,0,0))
+                self.item_sprite.remove()

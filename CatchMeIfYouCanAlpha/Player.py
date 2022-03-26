@@ -67,7 +67,7 @@ class Player():
 
         if(keys[0]):
             self.position.y -= 0.01 * dt * self.speed
-            self.rotation += 0.04 * dt * self.rot_speed
+            self.rotation += 0.03 * dt * self.rot_speed
             self.animtion_satte += 0.04
             if(self.animtion_satte >= len(self.animations)): 
                 self.animtion_satte = 0
@@ -75,7 +75,7 @@ class Player():
             
         if(keys[1]):
             self.position.x -= 0.01 * dt * self.speed
-            self.rotation += 0.04 * dt * self.rot_speed
+            self.rotation += 0.03 * dt * self.rot_speed
             self.animtion_satte += 0.04
             if(self.animtion_satte >= len(self.animations)): 
                 self.animtion_satte = 0
@@ -83,7 +83,7 @@ class Player():
 
         if(keys[2]):
             self.position.y += 0.01 * dt * self.speed
-            self.rotation -= 0.04 * dt * self.rot_speed
+            self.rotation -= 0.03 * dt * self.rot_speed
             self.animtion_satte += 0.04
             if(self.animtion_satte >= len(self.animations)): 
                 self.animtion_satte = 0
@@ -91,7 +91,7 @@ class Player():
 
         if(keys[3]): 
             self.position.x += 0.01 * dt * self.speed
-            self.rotation -= 0.04 * dt * self.rot_speed
+            self.rotation -= 0.03 * dt * self.rot_speed
             self.animtion_satte += 0.04
             if(self.animtion_satte >= len(self.animations)): 
                 self.animtion_satte = 0
