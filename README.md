@@ -12,4 +12,4 @@
 
 # Problems
 * Enemy don't get multiplication by Wave System
-* Fixing lags while enemy is doing animations
+* Fixing lags while enemy is updating animations
